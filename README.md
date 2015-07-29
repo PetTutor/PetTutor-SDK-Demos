@@ -17,13 +17,13 @@ You can also submt your .hex file to us at: tech [at] smartanimaltraining  com a
 
 # Triggering a Feed Cycle from the Arduino:
 
-```arduino
+```c
 Serial.write("CMD-ACCESSORY-FEED");
 ```
 
 You can also trigger the feed command through the scratch banks with:
 
-```arduino
+```c
 Bean.setScratchNumber(5, 1);
 ```
 
