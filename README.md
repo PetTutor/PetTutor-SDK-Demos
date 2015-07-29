@@ -13,7 +13,7 @@ Accessories are easily developed by programming the Light Blue Beans. These acce
 
 The process is simple: 1) Build an accessory, 2) Include the code to trigger the feeder, 3) Use the Pet Tutor app to connect your accessory to the Feeder device. 
 
-You can also submt your .hex file to us at: tech@smartanimaltraining.com and we will post it on our mini-app store for free. This allows other Makers to use your ardunio apps.
+You can also submt your .hex file to us at: tech [at] smartanimaltraining  com and we will post it on our mini-app store for free. This allows other Makers to use your ardunio apps.
 
 # Triggering a Feed Cycle from the Arduino:
 
