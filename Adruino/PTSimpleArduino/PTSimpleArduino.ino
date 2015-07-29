@@ -64,8 +64,10 @@ void loop()
     // Below is the command to trigger a feed cycle on the Pet Tutor device
     // Commands ARE case sensitive
     ///////////////////////////////////
-    Serial.write("CMD-ACCESSORY-FEED");
+    Serial.write("CMD-ACCESSORY-FEED"); // comment out this line if using scratch bank
     ///////////////////////////////////    
+    // OR via scratch bank;
+    //Bean.setScratchNumber(5, 1); // uncomment this line to use scratch bank
   }
 
   // it's important to sleep the Bean. If you don't they can become unresponsive
