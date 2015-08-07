@@ -41,6 +41,7 @@ AccelerationReading lastAccel = {0, 0, 0};
 
 // we'll use this to dampen our results
 float sensitivity = 50.0;
+int stableDecayAmount = 5;
 
 // store the differences between the current and previous accel data
 float xDiff = 0.0;
@@ -49,8 +50,9 @@ float zDiff = 0.0;
 
 // decide if we can trigger the feeder
 boolean canTrigger = false;
+int stableDecay = 0;
 
-void setup() 
+void setup()
 {
   // this is important to allow the virtual terminal to recieve responses during development
   Serial.begin(57600);
@@ -58,67 +60,74 @@ void setup()
 
   // start with the onboard LED off
   Bean.setLed(0,0,0);
- 
+
   // this helps with power management. The bean can be put to sleep until something connects
   // to the device and then it'll wake back up and start running.
-  Bean.enableWakeOnConnect( true ); 
+  Bean.enableWakeOnConnect( true );
 }
- 
-void loop() 
-{ 
+
+void loop()
+{
   // we'll check if we are connected and then if we are we'll process the acceleration data
   // to determine if we should feed. If we are not connected we turn off the LED and sleep.
   bool connected = Bean.getConnectionState();
- 
+
   if ( connected )
   {
     // a green LED means it's ready to feed while red means it can't be triggered yet
-    Bean.setLed( 0, 255, 0 );
+    if (canTrigger) {
+      Bean.setLed(0, 255, 0);
+    } else {
+      Bean.setLed(255, 0, 0);
+    }
 
     AccelerationReading accel = {0, 0, 0};
-   
+
     // get the acceleration data and determine if we can feed based on how long its been
     // stable, and how great the movement is.
-    accel = Bean.getAcceleration();  
+    accel = Bean.getAcceleration();
     if (lastAccel.xAxis == 0 && lastAccel.yAxis == 0 && lastAccel.zAxis == 0)
       lastAccel = accel;
-      
+
     xDiff = abs(lastAccel.xAxis - accel.xAxis);
     yDiff = abs(lastAccel.yAxis - accel.yAxis);
     zDiff = abs(lastAccel.zAxis - accel.zAxis);
-    
+
     if (xDiff > sensitivity || yDiff > sensitivity || zDiff > sensitivity)
-    {     
+    {
       if (canTrigger)
-      { 
-        //Serial.println("Feed!"); // this is used for virtual serial processing
+      {
+        // Serial.println("Feed!"); // this is used for virtual serial processing
 
         // Below is the command to trigger a feed cycle on the Pet Tutor device
         // Commands ARE case sensitive
         ///////////////////////////////////
         Serial.write("CMD-ACCESSORY-FEED");
         ///////////////////////////////////
-        
+
         canTrigger = false;
+        stableDecay = stableDecayAmount;
         Bean.setLed(255, 0, 0);
       }
-    }    
-    
-    // must be stable for 3 second
-    for (int i = 0; i < 3; i++)
-    {
-      if (xDiff < sensitivity && yDiff < sensitivity && zDiff < sensitivity && canTrigger == false)
-      { 
-        canTrigger = true;
-        xDiff = yDiff = zDiff = 0.0;
-        lastAccel.xAxis = lastAccel.yAxis = lastAccel.zAxis = 0.0;
-        //Serial.println("Can feed!");
-        Bean.setLed(0, 255, 0);
-      }
     }
-    
+
+    if (xDiff < sensitivity && yDiff < sensitivity && zDiff < sensitivity && canTrigger == false)
+    {
+      if (stableDecay < 1)
+      {
+        canTrigger = true;
+      }
+      else
+      {
+        --stableDecay;
+      }
+
+      xDiff = yDiff = zDiff = 0.0;
+      lastAccel.xAxis = lastAccel.yAxis = lastAccel.zAxis = 0.0;
+    }
+
     lastAccel = accel;
-    
+
     Bean.sleep(250);
   }
   else
