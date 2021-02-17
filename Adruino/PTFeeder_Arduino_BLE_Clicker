@@ -1,0 +1,101 @@
+/* this sketch triggers the Pet Tutor Feedeer every 500 ms.
+    Timing can be adjusted by changing the argument in the
+    "Wait" command.
+    This works on the basis that the device stays connected.
+    Initial Design John Clarke Feb 7 2021.
+
+    The circuit:
+    Arduino Nano 33 BLE or equivalent (pins may differ)
+    push-button (normally open) connected between Digital Pin 4 and 3.3v
+    pulldown resistor (1000 ohm) connected between Digital Pin 4 and ground
+    Power provided by USB or via 9V battery connected to GND and VIn
+
+    Timing loop to check if putton is pressed is set with 1200ms delay
+    any lower than this seems to send feed commands on top of each other
+    thereby negating the first command.  Holding the button down cycles the
+    feeder about every 1 second.
+
+    This assumes the name of the feeder has remained "PTFeeder"
+
+    This iteration isusing the connection invterval feature of the BLE library
+    with minimum connection time of 7.5 ms and maximum of 50ms.
+*/
+#include <ArduinoBLE.h>
+// the pin number of the button
+const  int Pin4 = 4;
+byte value = 0x00; /*"value" is used as a dummy variable - we query the PTFeeder for
+  data that isn't used to maintain the BLE connection with the feeder.*/
+
+const int pinLow = LOW;
+//the pin number of the built-in LED
+const int ledPin =  13;
+void setup() {
+  //begin initialization
+
+  Serial.begin(115200);
+  //  while (!Serial); uncomment for debug purposes
+  pinMode(ledPin, OUTPUT);   //set the built-in LED pin to output
+  pinMode(Pin4, INPUT); //set the button to input
+
+  if (!BLE.begin()) {
+//    Serial.println("starting BLE failed!");
+    while (1);
+  }
+//  Serial.println("BLE Central - PetTutor Feeder Remote trigger");
+  // start scanning for peripheral
+  BLE.setConnectionInterval(0x0006, 0x0028); // 7.5 ms minimum, 50 ms maximum
+
+  //  BLE.scanForName("PTFeeder");
+}
+void loop() {
+  BLE.scanForAddress("00:05:c6:1f:56:9c");// hard coded MAC address of PT Feeder
+
+  BLEDevice pettutor = BLE.available();
+
+
+  if (pettutor) {
+
+   // Serial.println("Connecting ...");
+    if (pettutor.connect()) {
+//      Serial.println("Connected");
+      BLE.stopScan();
+    }
+    else {
+//      Serial.println("Failed to connect!");
+      return;
+    }
+    digitalWrite(ledPin, HIGH);
+    Serial.println("Waiting for button press ...");
+    pettutor.discoverAttributes();
+    BLEService feedService = pettutor.service(2);
+
+    while (pettutor.connected()) {
+      BLECharacteristic feedCycle = feedService.characteristic(2);// hard coding the Feed Cycle characteristic from PT Feeder
+      feedCycle.readValue(value); //read the data every time we cycle through to try to maintain connection
+      if (feedService) {
+        int buttonPressed = digitalRead(Pin4); /*if the button is pressed, the Feed Cycle characterisitic
+        is writtn to 0x00 to trigger a treat and then  queried again after a short delay
+        to continuously maintain the connection
+        */
+        if (buttonPressed) {  //discover pettutor attributes
+          //   BLECharacteristic feedCycle = feedService.characteristic(2);
+          //use the service if it has the correct Characteristic UUID - Feed Cycle in the PT Feeder
+          if (feedService.hasCharacteristic("b0e6a4bf-cccc-ffff-330c-0000000000f1")) {
+            feedCycle.writeValue((byte)0x00);
+            Serial.println("feeder triggered");
+
+            delay(1200);
+            feedCycle.readValue(value);
+          }//if hasCharacteristic
+          
+        }//if buttonPressed
+
+        pettutor.connect();
+      } //if feed service
+      //} //if discover attributes
+Serial.println("disconnected from feed service");
+    }// while connected
+    digitalWrite(ledPin, LOW);//turn off the on-board LED if the PTFeeder is not connected
+  } // if(pettutor)
+  //  pettutor.disconnect();
+} //void loop()
