@@ -1,0 +1,116 @@
+#include <Arduino_LSM9DS1.h>
+#include <ArduinoBLE.h>
+
+
+/* this sketch triggers the Pet Tutor Feedeer after the Nano 33 BLE
+ *  moves in any direction.  This is based on the gyroscope in the IMU 
+ *  and could be changed to the acclerometer if desired.
+    it does only if it has been 1 second since the last trigger
+
+    \
+    Initial Design John Clarke Feb 7 2021.
+    Updated Feb 25 2021 John Clarke
+    modified Feb 27 2021 John Clarke
+    changed from Button trigger to movement trigger 16 March 2021
+
+    The circuit:
+    Arduino Nano 33 BLE or equivalent (pins may differ)
+   
+
+    This sketch assumes the name of the feeder has remained "PTFeeder"
+
+    This iteration is using the connection invterval feature of the BLE library
+    with minimum connection time of 10 ms and maximum of 1 second.
+ 
+*/
+//these are the global constants used in this sketch
+
+// the pin number of the button used to trigger the feeder
+const int pinLow = LOW;
+float x , y, z, delta = 150;
+
+
+
+
+//the pin number of the built-in LED - could also use BUILTIN_LED
+const int ledPin =  13;
+unsigned long previousMillis = 0;
+unsigned long interval = 180000;
+void setup() {
+  //begin initialization
+
+  Serial.begin(115200);
+  //  while (!Serial);
+  /*uncomment previous line for debug purposes - prevents code from running if
+     arduino not connected to computer and serial monitor is not open
+     all Serial.print and Serial.println can be removed after debug complete
+  */
+  pinMode(ledPin, OUTPUT);   //set the built-in LED pin to output
+  //  pinMode(Pin4, INPUT); //set the button to input -- uncomment line to use button mode
+  //wait for the BLE 33 to initialize the bluetooth connection
+  if (!BLE.begin()) {
+        Serial.println("starting BLE failed!");
+    while (1);
+  }
+  //wait for the IMU to intialize
+  if (!IMU.begin()) {
+    Serial.println("Starting IMU failed.");
+    while (1);
+  }
+  // start scanning for peripheral
+  BLE.scanForAddress("00:05:c6:1f:56:9c");// hard coded address of PT Feeder comment to code for name
+
+  // Use the oneshot mode for the IMU - change to ContinuousMode for more frequent input(?)
+  IMU.setOneShotMode();
+  //set the parameters for the bluetooth connection to the feeder
+  // 10 ms minimum, 1 sec maximum based on increments of 1.25 ms
+  BLE.setConnectionInterval(0x0008, 0x03E8);
+}
+
+void loop() {
+  BLE.scanForAddress("00:05:c6:1f:56:9c");// hard coded address of PT Feeder comment to code for name
+  BLEDevice pettutor = BLE.available();
+  Serial.println(pettutor.localName());
+  if (pettutor) {
+
+    if (pettutor.connect()) {
+      Serial.println("Connected");
+      BLE.stopScan();
+    }
+    
+    else {
+  
+      Serial.println("Failed to connect!");
+      return;
+    }
+    digitalWrite(ledPin, HIGH);
+    Serial.println("Waiting for motion ...");
+    pettutor.discoverAttributes();
+    BLEService feedService = pettutor.service(2);
+    BLECharacteristic feedCycle = feedService.characteristic(2);
+    while (pettutor.connected()) {
+      if (feedCycle) {
+        if (IMU.gyroscopeAvailable()) {
+          IMU.readGyroscope(x, y, z);
+          /*if the arduino is moved in any directio, the Feed Cycle characterisitic
+            is writtn to 0x00 to trigger a treat
+          */
+          if ((x > delta) || (x < -delta) || (y  > delta) || (y  < -delta)) { //if moved
+            //use the service if it has the correct Characteristic UUID - Feed Cycle in the PT Feeder
+            if (feedService.hasCharacteristic("b0e6a4bf-cccc-ffff-330c-0000000000f1")) {
+              feedCycle.writeValue((byte)0x00);
+              Serial.println("feeder triggered");
+              //              delay(2000);//button de-bounce timing.  May need adjustment
+              pettutor.disconnect();
+              pettutor.connect();
+              pettutor.poll(1000);
+            }//if hasCharacteristic  // loop is used to confirm only Feed Cycle is written to
+
+          }//if moved
+        } //if IMU gyroscopeAvailable
+      } //if feedCycle
+    }// while connected
+    Serial.println("disconnected from feed service");
+    digitalWrite(ledPin, LOW);//turn off the on-board LED if the PTFeeder is not connected
+  } // if(pettutor)
+} //void loop()
