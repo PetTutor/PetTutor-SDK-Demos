@@ -1,9 +1,23 @@
 # PetTutor-SDK-Demos
-This is a set of demo applications to help anyone jump start their development for the Pet Tutor animal training device.
+This document contains protocols and demo applications to help programmers,engineers and hobbiests jump start development for the Smart Training Feeder by Pet Tutor(R). The Pet Tutor technology has improved over the years and there are now 2 generations of Bluetooth Low Energy(BLE) that use different open protocols to trigger the feeder. We would love to hear from you if you have questions or if you would like to share what you build.  Contact us at email: Support@PetTutor.Biz    website: PetTutor.Biz
+
+1. BLE 4.0 The "Light Blue Bean" by Punch Through Design(this BLE device is no longer made for Pet Tutor Gen 2).
+2. BLE 4.2 A custom BLE interface by Smart Animal Training Systems, LLC (maker of Pet Tutor Gen 3)
+
+In both generations the way to trigger the feeder from your application is to use a BLE library for your device to the send wireless BLE commands to the feeder.  This means you will need access to a BLE library and some knowledge of how to discover, connect and pass messages over BLE. Applications have been written for the following devices but not all are covered in this document: Arduino, Raspberry Pi, Android, iOS, Windows MacOS etc.
+
+# Gen 3 Pet Tutor Smart Training Feeder
+see details ---> [link]https://docs.google.com/document/d/1PxKD6AsvxdNHz8d7aNg2p_5EXLo3YyCsrwHvg-yw6h0/edit?usp=sharing
+
+# Gen 2 Pet Tutor Smart Training Feeder
+The following are examples in this document are from the older Gen 2 Pet Tutor. For any feeder sold in 2018 or later it is Gen 3(see link above)
 
 # Prerequisites To Accessory Development:
-The Pet Tutor SDK currently uses Punch Through Design's Light Blue Bean to allow of an open source solution to developing for the device. To learn more about the Bean and how to setup their software (required before development) go to:
+The to allow of an open  solution to developing for the device. To learn more about the Bean and how to setup their software (required before development) go to:
 
+A. The newer BLE 4.2 interface:
+
+B. The Bean BLE 4.0 (older Gen 2 feeders):
 https://punchthrough.com/bean/getting-started-osx/ (OSX Development Install Guide)
 https://punchthrough.com/bean/getting-started-windows/ (Windows Development Install Guide)
 https://punchthrough.com/bean/ (general info)
@@ -48,9 +62,6 @@ You can also trigger a feed command via the scratch bank registers on the device
 int feedValue = 1;
 [selectedBean setScratchBank:5 data:[NSData dataWithBytes:&feedValue length:sizeof(feedValue)]];
 ```
-
-# Other Platforms
-Android is the big request and we are currently working on. Punch Through Design currently has a Pre-Release SDK and an Unofficial SDK available for development. We're working to develop a set of demo applications for you to jump start your Pet Tutor development. As soon as those are available we'll update them here and let the community know!
 
 Windows requires 8.1+ and currently can only be used for developing accessories and not windows applications.
 
