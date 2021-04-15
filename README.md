@@ -7,7 +7,7 @@ This document contains protocols and demo applications to help programmers,engin
 In both generations the way to trigger the feeder from your application is to use a BLE library for your device to the send wireless BLE commands to the feeder.  This means you will need access to a BLE library and some knowledge of how to discover, connect and pass messages over BLE. Applications have been written for the following devices but not all are covered in this document: Arduino, Raspberry Pi, Android, iOS, Windows MacOS etc.
 
 # Gen 3 Pet Tutor Smart Training Feeder
-see details ---> [link](https://docs.google.com/document/d/1PxKD6AsvxdNHz8d7aNg2p_5EXLo3YyCsrwHvg-yw6h0/edit?usp=sharing)
+see details ---> [Gen3 and Gen2 BLE protocols](https://docs.google.com/document/d/1PxKD6AsvxdNHz8d7aNg2p_5EXLo3YyCsrwHvg-yw6h0/edit?usp=sharing)
 
 # Gen 2 Pet Tutor Smart Training Feeder
 The following are examples in this document are from the older Gen 2 Pet Tutor. For any feeder sold in 2018 or later it is Gen 3(see link above)
