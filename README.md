@@ -1,10 +1,10 @@
 # PetTutor-SDK-Demos
 This document contains protocols and demo applications to help programmers,engineers and hobbiests jump start development for the Smart Training Feeder by Pet Tutor(R). The Pet Tutor technology has improved over the years and there are now 2 generations of Bluetooth Low Energy(BLE) that use different open protocols to trigger the feeder. We would love to hear from you if you have questions or if you would like to share what you build.  Contact us at email: Support@PetTutor.Biz    website: PetTutor.Biz
 
-1. BLE 4.0 The "Light Blue Bean" by Punch Through Design(this BLE device is no longer made for Pet Tutor Gen 2).
-2. BLE 4.2 A custom BLE interface by Smart Animal Training Systems, LLC (maker of Pet Tutor Gen 3)
+1. BLE 4.0 Gen 2 Pet Tutor. The "Light Blue Bean" by Punch Through Design(the "Bean" device is no longer made and was only used in Gen 2 Pet Tutors).
+2. BLE 4.2 Gen 3 Pet Tutor. BLE integrated in hardware by Smart Animal Training Systems, LLC (maker of Pet Tutor Gen 3)
 
-In both generations the way to trigger the feeder from your application is to use a BLE library for your device to the send wireless BLE commands to the feeder.  This means you will need access to a BLE library and some knowledge of how to discover, connect and pass messages over BLE. Applications have been written for the following devices but not all are covered in this document: Arduino, Raspberry Pi, Android, iOS, Windows MacOS etc.
+In both generations the method to trigger the feeder from your application is to use a BLE library for your device to the send wireless BLE commands to the feeder.  This means you will need access to a BLE library and some knowledge of how to discover, connect and pass messages over BLE. Applications have been written for the following devices but not all are covered in this document: Arduino, Raspberry Pi, Android, iOS, Windows MacOS etc.
 
 # Gen 3 Pet Tutor Smart Training Feeder
 see details ---> [Gen3 and Gen2 BLE protocols](https://docs.google.com/document/d/1PxKD6AsvxdNHz8d7aNg2p_5EXLo3YyCsrwHvg-yw6h0/edit?usp=sharing)
