@@ -9,6 +9,9 @@ In both generations the method to trigger the feeder from your application is to
 # Gen 3 Pet Tutor Smart Training Feeder
 see details ---> [Gen3 and Gen2 BLE protocols](https://docs.google.com/document/d/1PxKD6AsvxdNHz8d7aNg2p_5EXLo3YyCsrwHvg-yw6h0/edit?usp=sharing)
 
+# Gen 3 feeder Example using Raspbery Pi and openHab
+blog by Paul Lambert ---> [Raspberry Pi and openHab] (https://technpol.wordpress.com/2021/04/25/pet-tutor-controlled-from-raspberry-pi-and-openhab/)
+
 # Gen 2 Pet Tutor Smart Training Feeder
 The following are examples in this document are from the older Gen 2 Pet Tutor. For any feeder sold in 2018 or later it is Gen 3(see link above)
 
