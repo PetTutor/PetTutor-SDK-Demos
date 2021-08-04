@@ -1,7 +1,10 @@
 # PetTutor-SDK-Demos
 This document contains protocols and demo applications to help programmers,engineers and hobbiests jump start development for the Smart Training Feeder by Pet Tutor(R). The Pet Tutor technology has improved over the years and there are now 2 generations of Bluetooth Low Energy(BLE) that use different open protocols to trigger the feeder. We would love to hear from you if you have questions or if you would like to share what you build.  Contact us at email: Support@PetTutor.Biz    website: PetTutor.Biz
+note: The Bean is not required for any interaction with the Pet Tutor and other devices like Arduino, ESP32 etc could be used as a BLE Client.  
 
-1. BLE 4.0 Gen 2 Pet Tutor. The "Light Blue Bean" by Punch Through Design(the "Bean" device is no longer made and was only used in Gen 2 Pet Tutors).
+In all the following examples the Pet Tutor is operating as a Bluetooth Low Energy(BLE) `BLE Peripheral`. So, in order to send BLE commands to it a `BLE Client` is required for example: phone app, Arduino, ESP32, Raspbery Pi etc. 
+
+1. BLE 4.0 Gen 2 Pet Tutor. The "Light Blue Bean" by Punch Through Design(the `"Bean" device is no longer made` and was only used in Gen 2 Pet Tutors).
 2. BLE 4.2 Gen 3 Pet Tutor. BLE integrated in hardware by Smart Animal Training Systems, LLC (maker of Pet Tutor Gen 3)
 
 In both generations the method to trigger the feeder from your application is to use a BLE library for your device to the send wireless BLE commands to the feeder.  This means you will need access to a BLE library and some knowledge of how to discover, connect and pass messages over BLE. Applications have been written for the following devices but not all are covered in this document: Arduino, Raspberry Pi, Android, iOS, Windows MacOS etc.
